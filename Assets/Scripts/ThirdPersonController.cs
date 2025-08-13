@@ -1,10 +1,10 @@
 ﻿/*
 * Author: Cheang Wei Cheng
 * Date: 14 June 2025
-* Description: This script handels the movement and jumping mechanics of a third-person character controller in Unity.
-* It allows the character to move relative to the camera's orientation, jump when grounded, and plays a sound effect upon jumping.
+* Description: This script handels the movement of a third-person character controller in Unity.
+* It allows the character to move relative to the camera's orientation.
 * The character's movement is controlled using Rigidbody physics for smooth and responsive interactions.
-* The script also includes a ground check using raycast to ensure the character can only jump when on the ground.
+* The script also includes an Animator component to handle character animations based on movement.
 * This script is designed to be attached to a GameObject with a Rigidbody component and a Collider.
 */
 
@@ -12,28 +12,11 @@ using UnityEngine;
 
 public class ThirdPersonController : MonoBehaviour
 {
-    [SerializeField]
-    AudioClip jumpSound; // Sound to play when jumping
     public float moveSpeed = 5f;
     public float rotationSpeed = 10f;
-    public float jumpForce = 5f;
     private Rigidbody rb;
+    private Animator animator; // Animator for character animations
     private Camera mainCamera;
-    [SerializeField] float groundCheckDistance = .5f;
-
-    /// <summary>
-    /// Property to check if the character is grounded
-    /// This property uses a raycast to check if there is ground directly below the character.
-    /// The raycast checks a distance defined by groundCheckDistance.
-    /// If the raycast hits something, it means the character is grounded and can jump.
-    /// </summary>
-    private bool IsGrounded
-    {
-        get
-        {
-            return Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, groundCheckDistance);
-        }
-    }
 
     /// <summary>
     /// Start is called before the first frame update.
@@ -42,6 +25,7 @@ public class ThirdPersonController : MonoBehaviour
     /// </summary>
     void Start()
     {
+        animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
         mainCamera = Camera.main; // Cache the main camera
     }
@@ -72,31 +56,21 @@ public class ThirdPersonController : MonoBehaviour
         // Apply movement using Rigidbody
         rb.MovePosition(rb.position + move);
 
+        // Update the isMoving parameter in the animator
+        if (move != Vector3.zero)
+        {
+            animator.SetBool("isMoving", true);
+        }
+        else
+        {
+            animator.SetBool("isMoving", false);
+        }
+
         // Rotate the player to face the direction of movement
         if (move != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(move);
             rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
-        }
-    }
-
-    /// <summary>
-    /// Method to make the character jump
-    /// This method checks if the character is grounded before applying the jump force.
-    /// This is done by using a raycast directly pointed downwards to check the distance to the ground.
-    /// If the character is grounded, it plays a jump sound and applies an upward force to the Rigidbody.
-    /// </summary>
-    public void Jump()
-    {
-        if (IsGrounded)
-        {
-            if (jumpSound != null)
-            {
-                AudioSource.PlayClipAtPoint(jumpSound, transform.position);
-            }
-            // Apply jump force
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z); // Reset vertical velocity
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
 }

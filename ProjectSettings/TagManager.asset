@@ -7,6 +7,12 @@ TagManager:
   - ResetZone
   - TrafficLight
   - ZebraCrossing
+  - Destination
+  - Car
+  - Bike
+  - Collectible
+  - Turn
+  - Target
   layers:
   - Default
   - TransparentFX
@@ -14,8 +20,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - Car
+  - Ground
   - 
   - 
   - 

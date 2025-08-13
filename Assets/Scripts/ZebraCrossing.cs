@@ -7,15 +7,21 @@ public class ZebraCrossing : MonoBehaviour
 
     public bool HasPedestrian => hasPedestrian;
 
-    // Method to set pedestrian presence
-    public void SetPedestrianPresence(bool presence)
+    // Method to detect if a player is crossing
+    private void OnTriggerEnter(Collider other)
     {
-        hasPedestrian = presence;
+        if (other.gameObject.CompareTag("Player"))
+        {
+            hasPedestrian = true;
+            Debug.Log("Pedestrian is crossing the zebra crossing.");
+        }
     }
-
-    // Optional: Method to toggle pedestrian presence
-    public void TogglePedestrianPresence()
+    private void OnTriggerExit(Collider other)
     {
-        hasPedestrian = !hasPedestrian;
+        if (other.gameObject.CompareTag("Player"))
+        {
+            hasPedestrian = false;
+            Debug.Log("Pedestrian has left the zebra crossing.");
+        }
     }
 }

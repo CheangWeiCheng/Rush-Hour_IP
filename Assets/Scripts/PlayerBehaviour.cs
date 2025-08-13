@@ -1,13 +1,13 @@
 /*
 * Author: Cheang Wei Cheng
-* Date: 14 June 2025
+* Date: 5 August 2025
 * Description:This script controls the player's behavior in the game.
-* It handles player interactions with coins, keycards, and doors, as well as player health and score management.
-* The player can collect coins, pick up keycards, and interact with doors to unlock them if they have a keycard.
-* The player can also fire projectiles, recover health in healing areas, and take damage from hazards like lava and spikes.
+* It handles player interactions with game objects, as well as player health and score management.
+* The player takes damage when touching hazards like cars and bikes, and sees a congratulatory message upon touching the destination.
+* The player can also jump using the ThirdPersonController component.
 * The script uses Unity's Input System for firing projectiles and handles raycasting to detect interactable objects in the game world.
 * The player's score and health are displayed on the UI, and the player respawns at a designated spawn point upon death.
-* The script also includes audio feedback for firing projectiles and interacting with objects.
+* The script also includes audio feedback for taking damage.
 */
 
 using UnityEngine;
@@ -19,15 +19,11 @@ public class PlayerBehaviour : MonoBehaviour
 {
     /// <summary>
     /// Store variables for player behaviour, for example:
-    /// gunPoint is the point from which projectiles are fired,
-    /// fireStrength determines how fast the projectile will travel,
-    /// fireAudioSource is the AudioSource component used to play firing sounds,
-    /// and projectile is the prefab for the projectile that will be fired.
+    /// maxHealth is the maximum health the player can have,
+    /// currentHealth is the player's current health,
+    /// scoreUI is the UI text element that displays the player's score,
+    /// and healthUI is the UI text element that displays the player's health.
     /// </summary>
-    AudioSource fireAudioSource;
-    public GameObject projectile;
-    public Transform gunPoint;
-    public float fireStrength = 5f;
 
     int maxHealth = 100;
     int currentHealth = 100;
@@ -37,10 +33,19 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField]
     TMP_Text healthUI;
     [SerializeField]
-    Image keycardUI;
+    TMP_Text timerText;
+    float elapsedTime;
     int currentScore = 0;
+    bool canInteract = false;
+    CoinBehaviour currentCoin = null;
+    AudioSource hurtAudioSource;
 
+    [SerializeField]
+    float interactionDistance = 2f;
+
+    [SerializeField] RectTransform congratulatoryBackground;
     [SerializeField] TMP_Text congratulatoryText;
+    [SerializeField] private Button replayButton;
 
     public Transform spawnPoint;
 
@@ -53,20 +58,80 @@ public class PlayerBehaviour : MonoBehaviour
     /// </summary>
     void Start()
     {
-        scoreUI.text = "SCORE: " + currentScore.ToString();
+        scoreUI.text = "STARS: " + currentScore.ToString();
         healthUI.text = "HEALTH: " + currentHealth.ToString();
-        keycardUI.enabled = false; // Hide the keycard image initially
         if (!mainCamera) mainCamera = Camera.main;
-        fireAudioSource = GetComponent<AudioSource>();
+        congratulatoryBackground.gameObject.SetActive(false);
         congratulatoryText.gameObject.SetActive(false);
+        hurtAudioSource = GetComponent<AudioSource>();
     }
 
     /// <summary>
-    /// Calls the Jump method on the ThirdPersonController component when the jump input is triggered.
+    /// This method calls HandleRaycastHighlighting every frame to check for interactable objects.
     /// </summary>
-    void OnJump(InputValue value)
+    void Update()
     {
-        GetComponent<ThirdPersonController>()?.Jump();
+        elapsedTime += Time.deltaTime;
+        int minutes = Mathf.FloorToInt(elapsedTime / 60);
+        int seconds = Mathf.FloorToInt(elapsedTime % 60);
+        timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        HandleRaycastHighlighting();
+    }
+
+    /// <summary>
+    /// Handles player interaction with collectibles, keycards, and doors.
+    /// This method is triggered by the interact input action.
+    /// It checks if the player can interact with a star, and performs the appropriate action.
+    /// If a coin is collected, it calls the Collect method on the CoinBehaviour script.
+    /// </summary>
+    void OnInteract(InputValue value)
+    {
+        if (canInteract)
+            if (currentCoin != null)
+            {
+                Debug.Log("Interacting with coin");
+                currentCoin.Collect(this);
+                currentCoin = null; // Reset current coin after interaction
+            }
+    }
+
+    /// <summary>
+    /// Handles raycasting to detect and highlight interactable objects in the game world.
+    /// This method checks for collectibles (stars) within a specified interaction distance.
+    /// If an interactable object is detected, it highlights the object and allows interaction,
+    /// while unhighlighting any previously highlighted objects by setting them to null.
+    /// If no interactable objects are detected, it resets the current objects and disables interaction.
+    /// </summary>
+    void HandleRaycastHighlighting()
+    {
+        Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        RaycastHit hitinfo;
+
+        if (Physics.Raycast(ray, out hitinfo, interactionDistance))
+        {
+            // Handle coin detection
+            if (hitinfo.collider.CompareTag("Collectible"))
+            {
+                var newCoin = hitinfo.collider.GetComponent<CoinBehaviour>();
+                if (currentCoin != newCoin)
+                {
+                    // Unhighlight the previous coin if it exists
+                    if (currentCoin != null) currentCoin.Unhighlight();
+                    currentCoin = newCoin;
+                    currentCoin.Highlight();
+                    canInteract = true; // Enable interaction
+                    Debug.Log("Coin detected");
+                }
+                return;
+            }
+        }
+
+        // If no valid object is detected, reset current objects and disable interaction
+        if (currentCoin != null)
+        {
+            currentCoin.Unhighlight();
+            currentCoin = null;
+        }
     }
 
     /// <summary>
@@ -76,7 +141,7 @@ public class PlayerBehaviour : MonoBehaviour
     public void ModifyScore(int amount)
     {
         currentScore += amount;
-        scoreUI.text = "SCORE: " + currentScore.ToString();
+        scoreUI.text = "STARS: " + currentScore.ToString();
     }
 
     /// <summary>
@@ -107,14 +172,66 @@ public class PlayerBehaviour : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.CompareTag("Stagship"))
+        if (other.CompareTag("Destination"))
         {
             Debug.Log("You have completed the game!");
-            congratulatoryText.text = "CONGRATULATIONS! YOU HAVE COMPLETED THE GAME!";
+            congratulatoryBackground.gameObject.SetActive(true);
+            // Format the congratulatory message
+            int minutes = Mathf.FloorToInt(elapsedTime / 60);
+            int seconds = Mathf.FloorToInt(elapsedTime % 60);
+
+            congratulatoryText.text =
+                $"<b>LEVEL COMPLETE!</b>\n" +
+                $"Time Taken: {minutes:00}:{seconds:00}\n" +
+                $"Stars Collected: {currentScore}\n\n" +
+                $"<b>Final Score: {Mathf.Max(1000, (currentScore * 1000) + Mathf.Max(0, 10000 - (elapsedTime * 10))):N0}</b>";
+
             congratulatoryText.gameObject.SetActive(true);
-            Invoke("HideMessage", 3f); // Hide message after 3 seconds
+            replayButton.onClick.AddListener(() =>
+            {
+                // Reload the current scene to restart the game
+                UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+            });
+        }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Car"))
+        {
+            Debug.Log("You were hit by a car!");
+            // Play the hurt audio
+            if (hurtAudioSource != null)
+            {
+                hurtAudioSource.Play();
+            }
+            // Respawn the player at the spawn point
+            transform.position = spawnPoint.position;
+            // Reset the player's health to maximum
+            currentHealth = maxHealth;
+            healthUI.text = "HEALTH: " + currentHealth.ToString();
+        }
+        else if (collision.gameObject.CompareTag("Bike"))
+        {
+            Debug.Log("You were hit by a bike!");
+            // Play the hurt audio
+            if (hurtAudioSource != null)
+            {
+                hurtAudioSource.Play();
+            }
+            currentHealth -= 50; // Reduce health by 50
+            healthUI.text = "HEALTH: " + currentHealth.ToString();
+            if (currentHealth <= 0)
+            {
+                Debug.Log("You died from a bike hit.");
+                // Respawn the player at the spawn point
+                transform.position = spawnPoint.position;
+                // Reset the player's health to maximum
+                currentHealth = maxHealth;
+                healthUI.text = "HEALTH: " + currentHealth.ToString();
+            }
         }
     }
     
