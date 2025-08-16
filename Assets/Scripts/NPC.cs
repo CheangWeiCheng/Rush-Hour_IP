@@ -1,3 +1,13 @@
+/*
+* Author: Groben Tham
+* Date: 12 August 2025
+* Description: This script controls the behavior of non-player characters (NPCs) in the game.
+* It manages the NPC's state (Idle or Patrol), handles movement using Unity's NavMesh system,
+* and allows for random patrol points within a specified radius.
+* The script uses coroutines to manage state transitions and movement logic.
+* It is designed to be attached to a GameObject with a NavMeshAgent component.
+*/
+
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;

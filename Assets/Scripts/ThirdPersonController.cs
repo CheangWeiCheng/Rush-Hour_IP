@@ -1,6 +1,6 @@
 ﻿/*
 * Author: Cheang Wei Cheng
-* Date: 14 June 2025
+* Date: 12 August 2025
 * Description: This script handels the movement of a third-person character controller in Unity.
 * It allows the character to move relative to the camera's orientation.
 * The character's movement is controlled using Rigidbody physics for smooth and responsive interactions.

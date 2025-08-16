@@ -1,3 +1,11 @@
+/*
+* Author: Cheang Wei Cheng
+* Date: 12 August 2025
+* Description: This script controls the traffic light behavior in the game.
+* It manages the light state (red/green), handles transitions, and provides visual feedback.
+* The script also includes VFX for when the light turns green.
+*/
+
 using UnityEngine;
 using System.Collections;
 

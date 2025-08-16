@@ -1,3 +1,12 @@
+/*
+* Author: Chui Yan Zhuo
+* Date: 12 August 2025
+* Description: This script handles the behavior of a chaser that follows and destroys targets with a specific tag.
+* It manages the chasing logic, target detection, and respawn mechanics.
+* The chaser can switch between "Chasing" and "Stopped" states based on interactions with the player.
+* The script is designed to be attached to a GameObject with a Rigidbody component for movement.
+*/
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;

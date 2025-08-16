@@ -1,3 +1,12 @@
+/*
+* Author: Cheang Wei Cheng
+* Date: 12 August 2025
+* Description: This script controls the zebra crossing behavior in the game.
+* It detects when a player is crossing the zebra crossing and sets a flag accordingly.
+* The script can be used to trigger events or behaviors when a player is on the crossing.
+* This script is designed to be attached to a GameObject with a Collider component set as a trigger.
+*/
+
 using UnityEngine;
 
 public class ZebraCrossing : MonoBehaviour
