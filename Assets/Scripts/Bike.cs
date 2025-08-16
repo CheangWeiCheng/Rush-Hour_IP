@@ -31,6 +31,11 @@ public class TagChaserDestroy : MonoBehaviour
         StartCoroutine(SwitchState("Chasing"));
     }
 
+    /// <summary>
+    /// Switches the current state of the chaser to a new state.
+    /// This method is used to transition between "Chasing" and "Stopped" states.
+    /// It starts the corresponding coroutine for the new state.
+    /// </summary>
     IEnumerator SwitchState(string newState)
     {
         if (currentState == newState) yield break;
@@ -38,6 +43,11 @@ public class TagChaserDestroy : MonoBehaviour
         StartCoroutine(currentState);
     }
 
+    /// <summary>
+    /// Coroutine that handles the "Chasing" state of the chaser.
+    /// It continuously moves towards the current target and destroys it upon reaching.
+    /// If no target is found, it searches for the closest active target with the specified tag.
+    /// </summary>
     IEnumerator Chasing()
     {
         while (currentState == "Chasing")
@@ -66,6 +76,11 @@ public class TagChaserDestroy : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Destroys the current target and starts a respawn coroutine to bring it back after a delay.
+    /// It stores the original position and rotation of the target before destroying it.
+    /// This allows the target to be reactivated at its original state after the respawn delay.
+    /// </summary>
     void DestroyAndRespawnTarget(GameObject target)
     {
         // Store original position and rotation
@@ -82,6 +97,11 @@ public class TagChaserDestroy : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Coroutine that handles the respawn of a target after a delay.
+    /// It waits for the specified respawn delay before reactivating the target at its original position and rotation.
+    /// This allows the target to reappear in the game after being destroyed.
+    /// </summary>
     IEnumerator RespawnTarget(GameObject target, Vector3 position, Quaternion rotation)
     {
         yield return new WaitForSeconds(respawnDelay);
@@ -96,6 +116,11 @@ public class TagChaserDestroy : MonoBehaviour
         respawnCoroutines.Remove(target);
     }
 
+    /// <summary>
+    /// Coroutine that handles the "Stopped" state of the chaser.
+    /// It waits for a specified duration before switching back to the "Chasing" state.
+    /// This allows the chaser to pause its activity for a while before resuming.
+    /// </summary>
     IEnumerator Stopped()
     {
         float stopTimer = 0f;
@@ -109,6 +134,11 @@ public class TagChaserDestroy : MonoBehaviour
         StartCoroutine(SwitchState("Chasing"));
     }
 
+    /// <summary>
+    /// Finds the next target with the specified tag that is active in the scene.
+    /// It searches for all GameObjects with the target tag and selects the closest one to chase.
+    /// If no active targets are found, it will not change the current target.
+    /// </summary>
     void FindNextTarget()
     {
         GameObject[] targets = GameObject.FindGameObjectsWithTag(targetTag);
@@ -130,6 +160,11 @@ public class TagChaserDestroy : MonoBehaviour
         currentTarget = closest;
     }
 
+    /// <summary>
+    /// Handles collision with the player.
+    /// If the chaser collides with the player and is not already in the "Stopped" state,
+    /// it switches to the "Stopped" state, pausing its chasing behavior.
+    /// </summary>
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player") && currentState != "Stopped")
@@ -138,6 +173,11 @@ public class TagChaserDestroy : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Cleans up all respawn coroutines when the chaser is destroyed.
+    /// This ensures that no lingering coroutines are left running after the chaser is removed from the scene.
+    /// It iterates through all stored respawn coroutines and stops them.
+    /// </summary>
     void OnDestroy()
     {
         // Clean up all respawn coroutines when this object is destroyed

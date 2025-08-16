@@ -16,7 +16,11 @@ public class ZebraCrossing : MonoBehaviour
 
     public bool HasPedestrian => hasPedestrian;
 
-    // Method to detect if a player is crossing
+    /// <summary>
+    /// This method is called when a player enters the trigger collider of the zebra crossing.
+    /// It sets the hasPedestrian flag to true, indicating that a player is currently crossing.
+    /// This can be used to trigger specific behaviors or events in the game when a player is on the crossing.
+    /// </summary>
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
@@ -25,6 +29,11 @@ public class ZebraCrossing : MonoBehaviour
             Debug.Log("Pedestrian is crossing the zebra crossing.");
         }
     }
+    /// <summary>
+    /// This method is called when a player exits the trigger collider of the zebra crossing.
+    /// It sets the hasPedestrian flag to false, indicating that no player is currently crossing.
+    /// This can be used to reset behaviors or events related to the zebra crossing.
+    /// </summary>
     private void OnTriggerExit(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))

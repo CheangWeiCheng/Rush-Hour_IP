@@ -22,6 +22,12 @@ public class Car : MonoBehaviour
     [SerializeField] private float stoppingDistance = 3f; // Distance to maintain from cars ahead
     [SerializeField] private LayerMask carDetectionMask; // Set to your Car layer
 
+    /// <summary>
+    /// Start is called before the first frame update.
+    /// This method initializes the Rigidbody component and sets the initial speed.
+    /// It also starts the car in the "Moving" state.
+    /// The car will check for front vehicles and respond to traffic lights and zebra crossings.
+    /// </summary>
     void Start()
     {
         if (rb == null) rb = GetComponent<Rigidbody>();
@@ -34,6 +40,12 @@ public class Car : MonoBehaviour
         CheckFrontVehicle();
     }
 
+    /// <summary>
+    /// Checks for a vehicle in front of the car using Raycast and updates the state accordingly.
+    /// If a car is detected, it switches to "Stopped" state.
+    /// If no car is detected, it resumes moving if not blocked by a traffic light or pedestrian crossing.
+    /// This method is called every FixedUpdate to ensure continuous checking.
+    /// </summary>
     private void CheckFrontVehicle()
     {
         // Calculate ray origin at specified height
@@ -45,7 +57,7 @@ public class Car : MonoBehaviour
             if (hit.collider.CompareTag("Car"))
             {
                 frontCar = hit.collider.GetComponent<Car>();
-                
+
                 if (frontCar)
                 {
                     if (currentState != "Stopped")
@@ -62,7 +74,7 @@ public class Car : MonoBehaviour
                 frontCar = null;
             }
             // Resume moving if not blocked by light or pedestrian
-            if (currentState == "Stopped" && 
+            if (currentState == "Stopped" &&
                 (currentTrafficLight == null || !currentTrafficLight.IsRed) &&
                 (currentZebraCrossing == null || !currentZebraCrossing.HasPedestrian))
             {
@@ -71,6 +83,11 @@ public class Car : MonoBehaviour
         }
     }
     
+    /// <summary>
+    /// Draws a gizmo in the editor to visualize the raycast used for detecting front vehicles.
+    /// This helps in debugging and understanding the detection range.
+    /// The ray is drawn from the car's position at a height of 0.5 units forward for the stopping distance.
+    /// </summary>
     void OnDrawGizmosSelected()
     {
         // Calculate ray origin at specified height
@@ -79,6 +96,11 @@ public class Car : MonoBehaviour
         Gizmos.DrawLine(rayOrigin, rayOrigin + transform.forward * stoppingDistance);
     }
 
+    /// <summary>
+    /// Switches the car's state and starts the corresponding coroutine.
+    /// This method is used to change the car's behavior based on interactions with traffic lights, zebra crossings, or other triggers.
+    /// It ensures that the car's movement logic is updated according to the current state.
+    /// </summary>
     IEnumerator SwitchState(string newState)
     {
         if (currentState == newState) yield break;
@@ -86,6 +108,11 @@ public class Car : MonoBehaviour
         StartCoroutine(currentState);
     }
 
+    /// <summary>
+    /// Coroutine for the "Moving" state where the car moves forward at the current speed.
+    /// It checks for traffic lights and zebra crossings to determine if it should stop or continue moving.
+    /// If a traffic light is red or a pedestrian is crossing, it switches to "Stopped" state.
+    /// </summary>
     IEnumerator Moving()
     {
         while (currentState == "Moving")
@@ -107,6 +134,11 @@ public class Car : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Coroutine for the "Stopped" state where the car stops moving.
+    /// It checks for conditions to resume moving, such as traffic lights turning green or pedestrians leaving the crossing.
+    /// If conditions are met, it switches back to "Moving" state.
+    /// </summary>
     IEnumerator Stopped()
     {
         while (currentState == "Stopped")
@@ -141,6 +173,11 @@ public class Car : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Coroutine for the "Resetting" state where the car resets its position and velocity.
+    /// This is typically triggered when the car collides with a reset zone.
+    /// It sets the car back to its starting position and rotation, and resumes moving.
+    /// </summary>
     IEnumerator Resetting()
     {
         Debug.Log("Resetting car");
@@ -150,6 +187,11 @@ public class Car : MonoBehaviour
         StartCoroutine(SwitchState("Moving"));
     }
 
+    /// <summary>
+    /// Coroutine for the "Turning" state where the car turns towards a specified direction.
+    /// This is triggered when the car enters a turn trigger area.
+    /// It instantly rotates the car to face the new direction and resumes moving.
+    /// </summary>
     IEnumerator Turning()
     {
         if (currentTurnTrigger != null)
@@ -170,6 +212,11 @@ public class Car : MonoBehaviour
         yield break;
     }
 
+    /// <summary>
+    /// Handles collision with reset zones to reset the car's position and state.
+    /// This method is called when the car collides with a GameObject tagged as "ResetZone".
+    /// It starts the Resetting coroutine to handle the reset logic.
+    /// </summary>
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("ResetZone"))
@@ -178,6 +225,12 @@ public class Car : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles trigger events for traffic lights, zebra crossings, and turns.
+    /// It updates the current traffic light or zebra crossing state and switches to appropriate states.
+    /// This method is called when the car enters a trigger collider.
+    /// It checks for traffic lights, zebra crossings, and turn triggers to manage the car's behavior.
+    /// </summary>
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("TrafficLight"))
@@ -208,6 +261,12 @@ public class Car : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles exit events for traffic lights and zebra crossings.
+    /// It resets the current traffic light or zebra crossing references when the car exits their trigger areas.
+    /// This method is called when the car exits a trigger collider.
+    /// It ensures that the car stops checking for conditions related to the exited traffic light or zebra crossing.
+    /// </summary>
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("TrafficLight"))

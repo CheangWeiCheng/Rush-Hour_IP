@@ -36,6 +36,11 @@ public class TrafficLight : MonoBehaviour
 
     public bool IsRed => isRed;
 
+    /// <summary>
+    /// Initializes the traffic light state and starts the light cycle coroutine.
+    /// Sets the initial light state based on startRed and updates the visual representation.
+    /// Spawns initial VFX if the light starts red.
+    /// </summary>
     private void Start()
     {
         isRed = startRed;
@@ -43,6 +48,10 @@ public class TrafficLight : MonoBehaviour
         lightCycleCoroutine = StartCoroutine(LightCycle());
     }
 
+    /// <summary>
+    /// Cleans up the VFX and stops the light cycle coroutine when the script is disabled.
+    /// This ensures no lingering effects or coroutines when the traffic light is not active.
+    /// </summary>
     private void OnDisable()
     {
         if (lightCycleCoroutine != null)
@@ -52,6 +61,12 @@ public class TrafficLight : MonoBehaviour
         CleanUpVFX();
     }
 
+    /// <summary>
+    /// Coroutine that manages the traffic light cycle.
+    /// It alternates between red and green states, with a yellow warning phase when transitioning from green to red.
+    /// It spawns VFX when the light turns green and handles the timing for each state.
+    /// The cycle starts after an initial delay if specified.
+    /// </summary>
     private IEnumerator LightCycle()
     {
         yield return new WaitForSeconds(initialDelay);
@@ -75,6 +90,11 @@ public class TrafficLight : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Spawns the green light VFX at the specified spawn point.
+    /// Cleans up any existing VFX before spawning a new one.
+    /// The VFX will automatically destroy itself after a specified duration.
+    /// </summary>
     private void SpawnGreenLightVFX()
     {
         CleanUpVFX(); // Clean up any existing VFX first
@@ -86,6 +106,11 @@ public class TrafficLight : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Cleans up the current VFX instance if it exists.
+    /// This method is called to ensure no lingering VFX when the light state changes or when the script is disabled.
+    /// It checks if the currentVFXInstance is not null and destroys it.
+    /// </summary>
     private void CleanUpVFX()
     {
         if (currentVFXInstance != null)
@@ -95,6 +120,11 @@ public class TrafficLight : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Coroutine that handles the yellow blinking effect when transitioning from green to red.
+    /// It blinks the yellow light a specified number of times with a defined duration for each blink.
+    /// This provides a visual warning to players that the light is about to change.
+    /// </summary>
     private IEnumerator BlinkYellow()
     {
         if (yellowMaterial == null) yield break;
@@ -108,6 +138,11 @@ public class TrafficLight : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets the traffic light state to red or green and updates the visual representation accordingly.
+    /// This method is called to change the light state and update the material of the light renderer.
+    /// It also logs the current state change for debugging purposes.
+    /// </summary>
     private void SetLightState(bool red)
     {
         isRed = red;
@@ -115,6 +150,11 @@ public class TrafficLight : MonoBehaviour
         Debug.Log($"Traffic light changed to: {(isRed ? "RED" : "GREEN")}");
     }
 
+    /// <summary>
+    /// Updates the visual representation of the traffic light based on its current state.
+    /// It changes the material of the light renderer to either red or green depending on the isRed flag.
+    /// This method is called whenever the light state changes to ensure the visual feedback is accurate.
+    /// </summary>
     private void UpdateLightVisual()
     {
         if (lightRenderer == null) return;
