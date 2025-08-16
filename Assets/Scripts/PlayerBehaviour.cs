@@ -34,18 +34,14 @@ public class PlayerBehaviour : MonoBehaviour
     TMP_Text healthUI;
     [SerializeField]
     TMP_Text timerText;
-    float elapsedTime;
-    int currentScore = 0;
+    public float elapsedTime;
+    public int currentScore = 0;
     bool canInteract = false;
     CoinBehaviour currentCoin = null;
     AudioSource hurtAudioSource;
 
     [SerializeField]
     float interactionDistance = 2f;
-
-    [SerializeField] RectTransform congratulatoryBackground;
-    [SerializeField] TMP_Text congratulatoryText;
-    [SerializeField] private Button replayButton;
 
     public Transform spawnPoint;
 
@@ -61,8 +57,6 @@ public class PlayerBehaviour : MonoBehaviour
         scoreUI.text = "STARS: " + currentScore.ToString();
         healthUI.text = "HEALTH: " + currentHealth.ToString();
         if (!mainCamera) mainCamera = Camera.main;
-        congratulatoryBackground.gameObject.SetActive(false);
-        congratulatoryText.gameObject.SetActive(false);
         hurtAudioSource = GetComponent<AudioSource>();
     }
 
@@ -172,31 +166,6 @@ public class PlayerBehaviour : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Destination"))
-        {
-            Debug.Log("You have completed the game!");
-            congratulatoryBackground.gameObject.SetActive(true);
-            // Format the congratulatory message
-            int minutes = Mathf.FloorToInt(elapsedTime / 60);
-            int seconds = Mathf.FloorToInt(elapsedTime % 60);
-
-            congratulatoryText.text =
-                $"<b>LEVEL COMPLETE!</b>\n" +
-                $"Time Taken: {minutes:00}:{seconds:00}\n" +
-                $"Stars Collected: {currentScore}\n\n" +
-                $"<b>Final Score: {Mathf.Max(1000, (currentScore * 1000) + Mathf.Max(0, 10000 - (elapsedTime * 10))):N0}</b>";
-
-            congratulatoryText.gameObject.SetActive(true);
-            replayButton.onClick.AddListener(() =>
-            {
-                // Reload the current scene to restart the game
-                UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
-            });
-        }
-    }
-
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Car"))
@@ -233,10 +202,5 @@ public class PlayerBehaviour : MonoBehaviour
                 healthUI.text = "HEALTH: " + currentHealth.ToString();
             }
         }
-    }
-    
-    void HideMessage()
-    {
-        congratulatoryText.gameObject.SetActive(false);
     }
 }

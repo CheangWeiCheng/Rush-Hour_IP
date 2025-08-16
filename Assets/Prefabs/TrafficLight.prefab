@@ -183,7 +183,7 @@ MonoBehaviour:
   yellowBlinks: 3
   greenLightVFXPrefab: {fileID: 0}
   vfxSpawnPoint: {fileID: 0}
-  vfxDuration: 2
+  vfxDuration: 6
 --- !u!23 &1360158175600571437 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: -1062024600886598705, guid: 58ff12d5b39c59446b5015152827efdf, type: 3}
@@ -223,7 +223,7 @@ MonoBehaviour:
   yellowBlinks: 3
   greenLightVFXPrefab: {fileID: 0}
   vfxSpawnPoint: {fileID: 0}
-  vfxDuration: 2
+  vfxDuration: 6
 --- !u!23 &6668054835387704494 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: -4671606735630077108, guid: 58ff12d5b39c59446b5015152827efdf, type: 3}
@@ -268,7 +268,7 @@ MonoBehaviour:
   yellowBlinks: 3
   greenLightVFXPrefab: {fileID: 0}
   vfxSpawnPoint: {fileID: 0}
-  vfxDuration: 2
+  vfxDuration: 6
 --- !u!1 &8026477995686587059 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 58ff12d5b39c59446b5015152827efdf, type: 3}
@@ -298,7 +298,7 @@ MonoBehaviour:
   yellowBlinks: 3
   greenLightVFXPrefab: {fileID: 4748223769645094175, guid: 8df7e39415af38a4f9d240e92ef5db8f, type: 3}
   vfxSpawnPoint: {fileID: 2361202951801098463}
-  vfxDuration: 2
+  vfxDuration: 6
 --- !u!65 &4530511415545173658
 BoxCollider:
   m_ObjectHideFlags: 0

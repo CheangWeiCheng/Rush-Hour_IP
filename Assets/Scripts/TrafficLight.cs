@@ -28,7 +28,7 @@ public class TrafficLight : MonoBehaviour
     [Header("VFX")]
     [SerializeField] private GameObject greenLightVFXPrefab; // Assign your VFX prefab in inspector
     [SerializeField] private Transform vfxSpawnPoint; // Where to spawn the VFX
-    [SerializeField] private float vfxDuration = 2f; // How long to keep VFX active
+    [SerializeField] private float vfxDuration = 6f; // How long to keep VFX active
 
     private bool isRed;
     private Coroutine lightCycleCoroutine;
@@ -79,7 +79,7 @@ public class TrafficLight : MonoBehaviour
                 yield return new WaitForSeconds(greenDuration);
                 yield return StartCoroutine(BlinkYellow());
                 SetLightState(true);
-                SpawnGreenLightVFX(); // Spawn VFX when turning red
+                SpawnRedLightVFX(); // Spawn VFX when turning red
             }
             // Red -> Green transition
             else
@@ -95,7 +95,7 @@ public class TrafficLight : MonoBehaviour
     /// Cleans up any existing VFX before spawning a new one.
     /// The VFX will automatically destroy itself after a specified duration.
     /// </summary>
-    private void SpawnGreenLightVFX()
+    private void SpawnRedLightVFX()
     {
         CleanUpVFX(); // Clean up any existing VFX first
 

@@ -19,7 +19,7 @@ This game is a road-crossing game where the goal is to reach your destination wi
     2. Cinemachine (for camera controls)
 
 ## 🖥️ System Requirements
-Platform: Windows
+Platform: Windows (Android and iOS planned in future)
 
 | Component      | Recommended                                   |
 |----------------|-----------------------------------------------|
@@ -38,7 +38,14 @@ Platform: Windows
 
 ## ⚠️ Known Limitations
 ### Current Bugs
-- None encountered
+- Some times, when the player is walking on the zebra crossing before the car has fully left the trigger, the car will stop instead of just continuing to move
+
+## FSM Diagrams
+![alt text](image.png)
+![alt text](image-1.png)
+![alt text](image-2.png)
+![alt text](image-3.png)
+![alt text](image-4.png)
 
 ## 📚 Asset Credits
 ### Scripts
@@ -51,7 +58,10 @@ Written by Chui Yan Zhuo
 **NPC.cs**
 Written by Groben Tham
 
-### Pre-Made Assets
+**MenuManager.cs**
+Written by Jason Koh
+
+### External Assets
 **Star collect, damage:**  
 *8 Bits Elements*  
 https://assetstore.unity.com/packages/audio/sound-fx/8-bits-elements-16848
