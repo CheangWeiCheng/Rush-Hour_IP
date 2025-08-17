@@ -1,3 +1,16 @@
+/*
+* Author: Jason Koh
+* Date: 16 August 2025
+* Description: This script manages the game menu, including the start menu and win state.
+* It handles state transitions, displays congratulatory messages, and allows the player to restart the game.
+* The script uses coroutines to manage different game states and UI updates.
+* It is designed to be attached to the player's GameObject.
+* The script also includes a method to handle player interactions with the game world, such as reaching a destination.
+* The congratulatory message is displayed when the player completes the level, showing the time taken and stars collected.
+* The script uses Unity's UI system to display text and buttons for user interaction.
+* It requires a RectTransform for the congratulatory background, a TMP_Text for the congratulatory message, and a Button for replay functionality.
+*/
+
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -13,6 +26,11 @@ public class MenuManager : MonoBehaviour
     private enum GameState { StartMenu, Running, Win }
     private GameState currentState;
 
+    /// <summary>
+    /// Start is called before the first frame update.
+    /// Initializes the menu manager, sets up the UI elements, and starts the game in the StartMenu state.
+    /// It hides the congratulatory background and text initially.
+    /// </summary>
     void Start()
     {
         congratulatoryBackground.gameObject.SetActive(false);
@@ -21,6 +39,11 @@ public class MenuManager : MonoBehaviour
         StartCoroutine(SwitchState("StartMenu"));
     }
 
+    /// <summary>
+    /// Switches the game state to the specified state.
+    /// This method is used to transition between different game states such as StartMenu, Running, and Win.
+    /// It starts the corresponding coroutine for the new state.
+    /// </summary>
     private IEnumerator SwitchState(string stateName)
     {
         // End current state
@@ -48,6 +71,11 @@ public class MenuManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Coroutine that handles the StartMenu state of the game.
+    /// It freezes the game, displays the congratulatory background and text, and waits for the player to press Space to start the game.
+    /// Once Space is pressed, it transitions to the Running state.
+    /// </summary>
     private IEnumerator GameStart()
     {
         Time.timeScale = 0f; // Freeze the game
@@ -67,6 +95,11 @@ public class MenuManager : MonoBehaviour
         yield return StartCoroutine(SwitchState("Running"));
     }
 
+    /// <summary>
+    /// Coroutine that handles the Running state of the game.
+    /// It resumes the game, allowing player interactions and gameplay to continue.
+    /// This method is called when the game starts or resumes after being paused.
+    /// </summary>
     private IEnumerator GameRunning()
     {
         Debug.Log("Game Running...");
@@ -75,6 +108,12 @@ public class MenuManager : MonoBehaviour
         yield break;
     }
 
+    /// <summary>
+    /// Coroutine that handles the Win state of the game.
+    /// It displays a congratulatory message with the time taken and stars collected, and allows the player to restart the game.
+    /// It calculates the final score based on the player's performance, including time taken and stars collected.
+    /// The game is paused while this state is active, and the player can click the replay button to restart.
+    /// </summary>
     private IEnumerator GameWin()
     {
         Debug.Log("You have completed the game!");
@@ -108,6 +147,11 @@ public class MenuManager : MonoBehaviour
         });
     }
 
+    /// <summary>
+    /// This method is called when the player reaches the destination.
+    /// It triggers the win state and displays the congratulatory message.
+    /// The game is paused, and the player can choose to replay the game.
+    /// </summary>
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Destination"))
