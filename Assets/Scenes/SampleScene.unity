@@ -4490,10 +4490,9 @@ MonoBehaviour:
   scoreUI: {fileID: 858224611}
   healthUI: {fileID: 1606539397}
   timerText: {fileID: 49259462}
+  elapsedTime: 0
+  currentScore: 0
   interactionDistance: 4
-  congratulatoryBackground: {fileID: 203756362}
-  congratulatoryText: {fileID: 2028960081}
-  replayButton: {fileID: 553459595}
   spawnPoint: {fileID: 338808056}
 --- !u!54 &527909231
 Rigidbody:
@@ -4699,6 +4698,21 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &527909237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 527909226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78735f9dc7df76b41bd44da5a4da87d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  congratulatoryBackground: {fileID: 203756362}
+  congratulatoryText: {fileID: 2028960081}
+  replayButton: {fileID: 553459595}
 --- !u!4 &536338051 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2105524577027775732, guid: d43377e5d27d9974ab036b1c6dd48cbd, type: 3}
@@ -18251,6 +18265,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3cb9784f5adea0c48846ea7f8a99e30b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 527909228}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3cb9784f5adea0c48846ea7f8a99e30b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 527909237}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3cb9784f5adea0c48846ea7f8a99e30b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 527909235}
